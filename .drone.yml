@@ -8,6 +8,9 @@ pipeline:
     pull: true
     commands:
       - go vet
+      - go get github.com/Sirupsen/logrus
+      - go get github.com/joho/godotenv
+      - go get github.com/urfave/cli
       - go test -cover -coverprofile=coverage.out
 
   build_linux_amd64:
@@ -19,12 +22,15 @@ pipeline:
       - GOARCH=amd64
       - CGO_ENABLED=0
     commands:
+      - go get github.com/Sirupsen/logrus
+      - go get github.com/joho/godotenv
+      - go get github.com/urfave/cli
       - go build -v -ldflags "-X main.build=${DRONE_BUILD_NUMBER}" -a -o release/linux/amd64/drone-git
 
   publish_linux_amd64:
     image: plugins/docker:17.05
     pull: true
-    repo: plugins/git
+    repo: jakwuh/drone-git
     tags: [ latest, 1.4.0, 1.4, 1 ]
     secrets: [ docker_username, docker_password ]
     dockerfile: Dockerfile
